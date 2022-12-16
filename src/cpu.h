@@ -99,7 +99,10 @@ public:
       LDA = 0x3A, STA = 0x32,
 
       // load/store HL direct
-      LHLD = 0x3A, SHLD = 0x32;
+      LHLD = 0x2A, SHLD = 0x22,
+
+      // exchange HL and DE
+      XCHNG = 0xEB;
 
   /** instruction set */
 
@@ -110,6 +113,8 @@ public:
   void moveIndirectTo(Byte &destination, const Memory &mem, int &cycles);
   void moveIndirectFrom(const Byte &source, Memory &mem, int &cycles);
   void moveImmediate(Byte &destination, int &cycles, const Memory &mem);
+  void loadImmediate(Byte &reg1, Byte &reg2, int &cycles, const Memory &mem);
+  void loadImmediate(Word &reg, int &cycles, const Memory &mem);
 
   /** debug */
 

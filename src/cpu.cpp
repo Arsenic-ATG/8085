@@ -238,7 +238,21 @@ void CPU::execute(int &cycles, Memory &mem) {
       moveImmediate(destination, cycles, mem);
     } break;
 
-    // load store accumulator ( from register pair )
+    // load/store immediate (register pair)
+    case LXI_B: {
+      loadImmediate(B, C, cycles, mem);
+    } break;
+    case LXI_D: {
+      loadImmediate(D, E, cycles, mem);
+    } break;
+    case LXI_H: {
+      loadImmediate(H, L, cycles, mem);
+    } break;
+    case LXI_SP: {
+      loadImmediate(sp, cycles, mem);
+    } break;
+
+    // load/store accumulator ( from register pair )
     case LDAX_B: {
       auto address = readRegisterPair(B, C);
       cycles--;
@@ -267,9 +281,30 @@ void CPU::execute(int &cycles, Memory &mem) {
     case STA: {
       storeAccumulator(cycles, mem);
     }
+    // load/store HL direct
+    case LHLD: {
+      auto address = fetchWord(cycles, mem);
+      H = mem[address];
+      L = mem[address + 1];
+    } break;
+    case SHLD: {
+      auto address = fetchWord(cycles, mem);
+      mem[address] = L;
+      mem[address + 1] = H;
+    } break;
+
+    // exchange HL and DE
+    case XCHNG: {
+      auto dataHL = readRegisterPair(H, L);
+      auto dataDE = readRegisterPair(D, E);
+      writeRegisterPair(H, L, dataDE);
+      writeRegisterPair(D, E, dataHL);
+    } break;
+
     default:
       // throw for unknown instruction.
-      std::cerr << "unknown instruction\n";
+      std::cerr << "unknown instruction enountered "
+                << static_cast<int>(instruction) << "\n";
     }
   }
 }
@@ -290,7 +325,7 @@ Word CPU::readRegisterPair(const Byte &reg1, const Byte &reg2) {
 void CPU::writeRegisterPair(Byte &reg1, Byte &reg2, Word &data) {
   // TODO: assert that reg1 and reg2 are valid register pair.
   reg1 = data >> 8;
-  reg2 = static_cast <Byte> (data);
+  reg2 = static_cast<Byte>(data);
 }
 
 /**
@@ -374,4 +409,22 @@ void CPU::moveIndirectFrom(const Byte &source, Memory &mem, int &cycles) {
 void CPU::moveImmediate(Byte &destination, int &cycles, const Memory &mem) {
   auto data = fetchByte(cycles, mem);
   destination = data;
+}
+
+/**
+ * Load the 16-bit address into 8-bit register pair (reg1,reg2)
+ */
+void CPU::loadImmediate(Byte &reg1, Byte &reg2, int &cycles,
+                        const Memory &mem) {
+  auto data = fetchWord(cycles, mem);
+  writeRegisterPair(reg1, reg2, data);
+}
+
+/**
+ * Load the 16-bit address into the 16 bit register reg (currently
+ * only stack pointer)
+ */
+void CPU::loadImmediate(Word &reg, int &cycles, const Memory &mem) {
+  auto data = fetchWord(cycles, mem);
+  reg = data;
 }
