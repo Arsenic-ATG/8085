@@ -115,16 +115,19 @@ public:
   void moveImmediate(Byte &destination, int &cycles, const Memory &mem);
   void loadImmediate(Byte &reg1, Byte &reg2, int &cycles, const Memory &mem);
   void loadImmediate(Word &reg, int &cycles, const Memory &mem);
-
+  void unconditionalJump(int &cycles, const Memory &mem);
+  void jumpIfNotZero(int &cycles, const Memory &mem);
+  void jumpIfZero(int &cycles, const Memory &mem);
   /** debug */
 
   /** getters */
-  auto getProgramCounter() const { return pc; }
-
+  auto getProgramCounter() const { return programCounter; }
+  auto getBRegister () const {return B; }
+  auto getARegister () const {return A; }
 private:
-  StatusFlags psw; // program status word
-  Word pc;         // program counter
-  Word sp;         // stack pointer
+  StatusFlags statusFlags; // program status word
+  Word programCounter;     // program counter
+  Word stackPointer;       // stack pointer
 
   Byte A, B, C, D, E, H, L;
 };
