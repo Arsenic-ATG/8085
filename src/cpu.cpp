@@ -10,13 +10,14 @@ void Memory::initialise() { data = {}; }
 // class cpu
 
 void CPU::reset(Memory &mem) {
-  pc = A = B = C = D = E = H = L = 0;
-  psw = {};
+  programCounter = A = B = C = D = E = H = L = 0;
+  statusFlags = {};
   mem.initialise();
 }
 
 void CPU::execute(int &cycles, Memory &mem) {
   while (cycles > 0) {
+    auto lastInstructionLocation = programCounter;
     auto instruction = fetchByte(cycles, mem);
     switch (instruction) {
 
@@ -249,7 +250,7 @@ void CPU::execute(int &cycles, Memory &mem) {
       loadImmediate(H, L, cycles, mem);
     } break;
     case LXI_SP: {
-      loadImmediate(sp, cycles, mem);
+      loadImmediate(stackPointer, cycles, mem);
     } break;
 
     // load/store accumulator ( from register pair )
@@ -332,9 +333,9 @@ void CPU::writeRegisterPair(Byte &reg1, Byte &reg2, Word &data) {
  * Fetch one byte data pointed by the Progam counter from memory MEM.
  */
 Byte CPU::fetchByte(int &cycles, const Memory &mem) {
-  auto currentData = mem[pc];
+  auto currentData = mem[programCounter];
   --cycles;
-  ++pc;
+  ++programCounter;
   return currentData;
 }
 
@@ -344,9 +345,10 @@ Byte CPU::fetchByte(int &cycles, const Memory &mem) {
  * find the lower byte of address then lower byte.
  */
 Word CPU::fetchWord(int &cycles, const Memory &mem) {
-  Word currentData = mem[pc];
-  ++pc;
-  currentData |= (mem[pc] << 8);
+  Word currentData = mem[programCounter];
+  ++programCounter;
+  currentData |= (mem[programCounter] << 8);
+  ++programCounter;
   cycles -= 2;
   return currentData;
 }
@@ -379,7 +381,7 @@ void CPU::storeAccumulator(int &cycles, Memory &mem) {
  * TODO: assert that both arguments are actually registers.
  */
 void CPU::moveRegister(Byte &destination, Byte &source) {
-  source = destination;
+  destination = source;
 }
 
 /**
