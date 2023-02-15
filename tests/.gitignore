@@ -1,0 +1,13 @@
+#######################
+#
+# This file contains the list of patterns which git should ignore
+# while inside the tests subdirectory.
+# These generally contain google test sourcd code ( can be directly
+# installed via cmake ) and other dynamically generated files by
+# google test framework.
+#
+#######################
+
+googletest-build/
+googletest-download/
+googletest-src/

@@ -1,3 +1,13 @@
+#######################
+#
+# This file contains the list of patterns which git should ignore
+# while tracking the project, this avoids any useless clutter
+# generated when building the project or by text editors to pollute
+# the source code of the remote repository.
+#
+#######################
+
+
 #############
 ### CMake ###
 #############
