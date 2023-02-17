@@ -35,7 +35,7 @@ Simply navigate to the repository ( `$ cd 8085` ) and use `cmake` to gneerate bu
 $ cmake . && make
 ```
 
-When done all the the binaries ( currently there are none ) should be present in '/bin' subdirectory and libraries in '/lib' subdirectory ( cmake is currently configured to compile it to a static library.
+When done, the library should be built as 'src/cpu.a' ( cmake is currently configured to compile it to a static library ).
 
 ### without using Cmake
 
