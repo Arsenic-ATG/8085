@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 
-project(lib8085)
+project(cpu)
 
 if(MSVC)
   add_compile_options(/MP) # Use multiple processors when building
@@ -16,6 +16,6 @@ set(EMULATOR_SOURCES "cpu.h" "cpu.cpp" "main.cpp")
 
 source_group("src" FILES ${EMULATOR_SOURCES})
 
-add_library(lib8085 ${EMULATOR_SOURCES})
+add_library(cpu ${EMULATOR_SOURCES})
 
-target_include_directories (lib8085 PUBLIC "${PROJECT_SOURCE_DIR}")
+target_include_directories (cpu PUBLIC "${PROJECT_SOURCE_DIR}")
