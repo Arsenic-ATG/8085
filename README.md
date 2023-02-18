@@ -1,17 +1,17 @@
 <!-- TODO: add a banner here -->
 # 8085
 
-The Intel 8085 is a classic 8-bit microprocessor that was widely used in the 1970s and 1980s in a variety of computer systems. This project is a software emulator for the 8085 processor using C++ programming language. The emulator allows users to run programs written for the 8085 on modern computer systems.
+The [Intel 8085](https://en.wikipedia.org/wiki/Intel_8085) is a classic 8-bit microprocessor that was widely used in the 1970s and 1980s in a variety of computer systems. This project is a software emulator for the 8085 processor using C++ programming language. The emulator allows users to run programs written for the 8085 on modern computer systems.
 
 ## Prerequisites
 
-### For user ( If you just want to just use this project )
+### For user ( If you just want to just use this project ) 👩‍🔧
 
   - Standard C++ compiler ( supporting C++17 or above )
   - [optional] Cmake build tool
   - [optional] Git version control system 
 
-### for developers ( If you want to contribute to this project )
+### for developers ( If you want to contribute to this project ) 🧑‍💻
 
   - A text editor to view/edit code
   - Git version control system
@@ -19,7 +19,7 @@ The Intel 8085 is a classic 8-bit microprocessor that was widely used in the 197
   - Cmake build tools along with GNU Make
   - Google Test framework ( for running testsuite )
 
-## Installation instructions
+## Installation instructions 👩‍🏫
 
 You can either use Cmake to build the project or compile it manually by hand. 
 
@@ -39,9 +39,9 @@ When done, the library should be built as 'src/cpu.a' ( cmake is currently confi
 
 ### without using Cmake
 
-All the source code is present in the `/src` subdirectoy of the project. The project currently only contains a header file and a source file pair with no additional dependency ( at least none for building ) so compilation command should not be complicated at all.
+All the source code is present in the [`/src`](./src) subdirectoy of the project. The project currently only contains a header file and a source file pair with no additional dependency ( at least none for building ) so compilation command should not be complicated at all.
 
-you can simply use your standard C++ compiler to compile the code and use `ar` ( archiver ) that usually comes bundled with UNIX to create static/dynamic library ( according to your choice ) from the project.
+you can simply use your standard C++ compiler to compile the code and use `ar` ( [archiver](https://en.wikipedia.org/wiki/Ar_(Unix)) ) that usually comes bundled with UNIX to create static/dynamic library ( according to your choice ) from the project.
 
 Here is the sequence of instructions that you would be performing ( you can use whatever compiler you have on your machine, I am using gcc here in this example )
 
@@ -51,9 +51,9 @@ $ g++ -c cpu.cpp -std=c++2a -o cpu.o
 $ ar rcs cpu.o lib8085.a
 ```
 
-## Contribution
+## Contribution 🤩
 
-If you want to contribute to the project, then make sure you can build the project properly before proceeding ( not always applicable for small documentation changes ), feel free to use discussion section or the issue section in case you have any difficulties during the process.
+If you want to contribute to the project, then make sure you can build the project properly before proceeding ( not always applicable for small documentation changes ), feel free to use [discussion section](https://github.com/Arsenic-ATG/8085/discussions) or the [issue section](https://github.com/Arsenic-ATG/8085/issues) in case you have any difficulties during the process.
 
 There are multiple ways in which you can contribute to the project 
 
@@ -64,15 +64,15 @@ There are multiple ways in which you can contribute to the project
 
 have a look at CONTRIBUTING.md ( currently work in progress ) for more detailed explanation about contributing to the project.
 
-## The API
+## The API 🤖
 
 WIP
 
-## Feedback
+## Feedback ✍️
 
 You can star the project, use discussion section, issue section or even mail me your feedback about what all you like and what all can be improved in future versions of the software
 
-## Support the project
+## Support the project 💪
 
 I currently don't take any monetary support so the only way to support this project currently is to give a feedback which can also be as simple as giving this repository a star on GitHub.
 
