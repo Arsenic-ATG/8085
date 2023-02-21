@@ -47,6 +47,6 @@ set(emulator_SOURCES
 source_group("src" FILES ${emulator_SOURCES})
 
 add_executable(emulatorTest ${emulator_SOURCES})
-add_dependencies(emulatorTest cpu)
+add_dependencies(emulatorTest 8085)
 target_link_libraries(emulatorTest gtest)
-target_link_libraries(emulatorTest cpu)
+target_link_libraries(emulatorTest 8085)

@@ -35,7 +35,7 @@ Simply navigate to the repository ( `$ cd 8085` ) and use `cmake` to gneerate bu
 $ cmake . && make
 ```
 
-When done, the library should be built as 'src/cpu.a' ( cmake is currently configured to compile it to a static library ).
+When done, the library should be built as 'src/lib8085.a' ( cmake is currently configured to compile it to a static library ).
 
 ### without using Cmake
 
@@ -48,7 +48,7 @@ Here is the sequence of instructions that you would be performing ( you can use 
 ``` shell
 $ cd src
 $ g++ -c cpu.cpp -std=c++2a -o cpu.o
-$ ar rcs cpu.o lib8085.a
+$ ar rcs lib8085.a cpu.o
 ```
 
 ## Contribution 🤩
