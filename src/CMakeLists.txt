@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 
-project(cpu)
+project(8085)
 
 if(MSVC)
   add_compile_options(/MP) # Use multiple processors when building
@@ -12,10 +12,10 @@ endif()
 
 set (CMAKE_CXX_STANDARD 20)
 
-set(EMULATOR_SOURCES "cpu.h" "cpu.cpp" "main.cpp")
+set(EMULATOR_SOURCES "cpu.h" "cpu.cpp")
 
 source_group("src" FILES ${EMULATOR_SOURCES})
 
-add_library(cpu ${EMULATOR_SOURCES})
+add_library(8085 ${EMULATOR_SOURCES})
 
-target_include_directories (cpu PUBLIC "${PROJECT_SOURCE_DIR}")
+target_include_directories (8085 PUBLIC "${PROJECT_SOURCE_DIR}")
