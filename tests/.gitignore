@@ -11,3 +11,6 @@
 googletest-build/
 googletest-download/
 googletest-src/
+
+# built test file binary
+emulatorTest
