@@ -5,12 +5,37 @@ using namespace emu;
 
 //  memeory
 
+
+/**
+ * Zero initilise the memory of the processor.
+ */
 void Memory::initialise() { data = {}; }
 
+/**
+ * Intialise memory with the program provided in the input file, the
+ * function also does bound checking and doesn't write to memory
+ * incase the data to be written to the memory is more than the memory
+ * iteself.
+ */
+bool Memory::initialise(std::ifstream &input_file) {
+  if (!input_file.is_open()) {
+    std::cerr << "can't open the file\n";
+    return false;
+  }
+
+  if (input_file.gcount() >= static_cast<long>(data.size())) {
+    std::cerr << "program is bigger than the memory\n";
+    return false;
+  }
+
+  input_file.read(reinterpret_cast<char *>(data.data()), data.size());
+  return true;
+}
 // class cpu
 
 void CPU::reset(Memory &mem) {
   programCounter = A = B = C = D = E = H = L = 0;
+  stackPointer = 0xFFFF;
   statusFlags = {};
   mem.initialise();
 }

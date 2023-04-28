@@ -12,6 +12,7 @@
 #define CPU_H
 
 #include <array>
+#include <fstream>
 
 namespace emu {
 
@@ -23,6 +24,7 @@ struct Memory {
   std::array<Byte, MEM_LIMIT> data;
 
   void initialise();
+  bool initialise(std::ifstream &input_file);
 
   // Read a byte
   Byte operator[](unsigned p_address) const { return data[p_address]; }
