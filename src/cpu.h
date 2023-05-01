@@ -104,20 +104,6 @@ public:
       // exchange HL and DE
       XCHNG = 0xEB;
 
-  /** instruction set */
-
-  void loadAccumulator(int &cycles, const Memory &mem);
-  void storeAccumulator(int &cycles, Memory &mem);
-
-  void moveRegister(Byte &destination, Byte &source);
-  void moveIndirectTo(Byte &destination, const Memory &mem, int &cycles);
-  void moveIndirectFrom(const Byte &source, Memory &mem, int &cycles);
-  void moveImmediate(Byte &destination, int &cycles, const Memory &mem);
-  void loadImmediate(Byte &reg1, Byte &reg2, int &cycles, const Memory &mem);
-  void loadImmediate(Word &reg, int &cycles, const Memory &mem);
-  void unconditionalJump(int &cycles, const Memory &mem);
-  void jumpIfNotZero(int &cycles, const Memory &mem);
-  void jumpIfZero(int &cycles, const Memory &mem);
   /** debug */
 
   /** getters */
@@ -130,6 +116,20 @@ private:
   Word stackPointer;       // stack pointer
 
   Byte A, B, C, D, E, H, L;
+
+  /** instruction set */
+  void loadAccumulator(int &cycles, const Memory &mem);
+  void storeAccumulator(int &cycles, Memory &mem);
+
+  void moveRegister(Byte &destination, Byte &source);
+  void moveIndirectTo(Byte &destination, const Memory &mem, int &cycles);
+  void moveIndirectFrom(const Byte &source, Memory &mem, int &cycles);
+  void moveImmediate(Byte &destination, int &cycles, const Memory &mem);
+  void loadImmediate(Byte &reg1, Byte &reg2, int &cycles, const Memory &mem);
+  void loadImmediate(Word &reg, int &cycles, const Memory &mem);
+  void unconditionalJump(int &cycles, const Memory &mem);
+  void jumpIfNotZero(int &cycles, const Memory &mem);
+  void jumpIfZero(int &cycles, const Memory &mem);
 };
 
 } // namespace emu
