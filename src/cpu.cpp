@@ -327,10 +327,73 @@ void CPU::execute(int &cycles, Memory &mem) {
       writeRegisterPair(D, E, dataHL);
     } break;
 
+    // jump
+    case JMP: {
+      unconditionalJump(cycles, mem);
+    } break;
+
+    // contitional jumps
+    case JNZ: {
+      jumpIfNotZero(cycles, mem);
+    } break;
+    case JZ: {
+      jumpIfZero(cycles, mem);
+    } break;
+    case JNC: {
+      jumpIfNotCarry(cycles, mem);
+    } break;
+    case JC: {
+      jumpIfCarry(cycles, mem);
+    } break;
+    case JPO: {
+      jumpIfOddParity(cycles, mem);
+    } break;
+    case JP: {
+      jumpIfEvenParity(cycles, mem);
+    } break;
+    case JPE: {
+      jumpIfPositive(cycles, mem);
+    } break;
+    case JM: {
+      jumpIfMinus(cycles, mem);
+    } break;
+
+    // call instructions
+    case CALL: {
+      unconditionalCall(cycles, mem);
+    } break;
+
+    // conditional call
+    case CNZ: {
+      callIfNotZero(cycles, mem);
+    } break;
+    case CZ: {
+      callIfZero(cycles, mem);
+    } break;
+    case CNC: {
+      callIfNotCarry(cycles, mem);
+    } break;
+    case CC: {
+      callIfCarry(cycles, mem);
+    } break;
+    case CPO: {
+      callIfOddParity(cycles, mem);
+    } break;
+    case CP: {
+      callIfEvenParity(cycles, mem);
+    } break;
+    case CPE: {
+      callIfPositive(cycles, mem);
+    } break;
+    case CM: {
+      callIfMinus(cycles, mem);
+    } break;
+
     default:
       // throw for unknown instruction.
       std::cerr << "unknown instruction enountered "
-                << static_cast<int>(instruction) << "\n";
+                << static_cast<int>(instruction)
+                << " at memory location : " << lastInstructionLocation << "\n";
     }
   }
 }
@@ -454,4 +517,290 @@ void CPU::loadImmediate(Byte &reg1, Byte &reg2, int &cycles,
 void CPU::loadImmediate(Word &reg, int &cycles, const Memory &mem) {
   auto data = fetchWord(cycles, mem);
   reg = data;
+}
+
+/**
+ * Transfer program control to a certain memory location
+ * unconditionally.
+ */
+void CPU::unconditionalJump(int &cycles, const Memory &mem) {
+  auto destination = fetchWord(cycles, mem);
+  programCounter = mem[destination];
+}
+
+/**
+ * Transfer program control to a certain memory location only when
+ * zero flag is not set.
+ */
+void CPU::jumpIfNotZero(int &cycles, const Memory &mem) {
+  if (!statusFlags.z) {
+    unconditionalJump(cycles, mem);
+  } else {
+    // In case the zero flag is set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Similar to jumpIfNotZero Transfer program control to a certain
+ * memory location only when zero flag is set.
+ */
+void CPU::jumpIfZero(int &cycles, const Memory &mem) {
+  if (statusFlags.z) {
+    unconditionalJump(cycles, mem);
+  } else {
+    // In case the zero flag is not set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Transfer program control to a certain memory location only when
+ * carry flag is not set.
+ */
+void CPU::jumpIfNotCarry(int &cycles, const Memory &mem) {
+  if (!statusFlags.c) {
+    unconditionalJump(cycles, mem);
+  } else {
+    // In case the carry flag is set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Similar to jumpIfNotCarry Transfer program control to a certain
+ * memory location only when carry flag is set.
+ */
+void CPU::jumpIfCarry(int &cycles, const Memory &mem) {
+  if (statusFlags.c) {
+    unconditionalJump(cycles, mem);
+  } else {
+    // In case the carry flag is not set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Transfer program control to a certain memory location only when
+ * carry flag is not set.
+ */
+void CPU::jumpIfOddParity(int &cycles, const Memory &mem) {
+  if (!statusFlags.p) {
+    unconditionalJump(cycles, mem);
+  } else {
+    // In case the parity flag is not set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Similar to jumpIfOddParity. Transfer program control to a certain
+ * memory location only when parity flag is set.
+ */
+void CPU::jumpIfEvenParity(int &cycles, const Memory &mem) {
+  if (statusFlags.p) {
+    unconditionalJump(cycles, mem);
+  } else {
+    // In case the parity flag is not set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Transfer program control to a certain memory location only when
+ * sign flag is not set.
+ */
+void CPU::jumpIfPositive(int &cycles, const Memory &mem) {
+  if (!statusFlags.s) {
+    unconditionalJump(cycles, mem);
+  } else {
+    // In case the sign flag is set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Similar to jumpIfPositive Transfer program control to a certain
+ * memory location only when sign flag is set.
+ */
+void CPU::jumpIfMinus(int &cycles, const Memory &mem) {
+  if (statusFlags.s) {
+    unconditionalJump(cycles, mem);
+  } else {
+    // In case the sign flag is set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Read the Target address which would be provided to the instruction
+ * as operand, and then branch out to the subroutine present at that
+ * address. Similar to jump instruction but also stores the returns
+ * address on the stack so that the flow can return when the next
+ * return command is encountered.
+ */
+void CPU::unconditionalCall(int &cycles, Memory &mem) {
+  auto destination = fetchWord(cycles, mem);
+  auto returnAddress = mem[programCounter];
+  stackPush(cycles, mem, returnAddress);
+  programCounter = mem[destination];
+}
+
+/**
+ * Transfer program control to a certain memory location only when
+ * zero flag is not set.
+ */
+void CPU::callIfNotZero(int &cycles, Memory &mem) {
+  if (!statusFlags.z) {
+    unconditionalCall(cycles, mem);
+  } else {
+    // In case the zero flag is set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Similar to callIfNotZero Transfer program control to a certain
+ * memory location only when zero flag is set.
+ */
+void CPU::callIfZero(int &cycles, Memory &mem) {
+  if (statusFlags.z) {
+    unconditionalCall(cycles, mem);
+  } else {
+    // In case the zero flag is not set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Transfer program control to a certain memory location only when
+ * carry flag is not set.
+ */
+void CPU::callIfNotCarry(int &cycles, Memory &mem) {
+  if (!statusFlags.c) {
+    unconditionalCall(cycles, mem);
+  } else {
+    // In case the carry flag is set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Similar to callIfNotCarry Transfer program control to a certain
+ * memory location only when carry flag is set.
+ */
+void CPU::callIfCarry(int &cycles, Memory &mem) {
+  if (statusFlags.c) {
+    unconditionalCall(cycles, mem);
+  } else {
+    // In case the carry flag is not set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Transfer program control to a certain memory location only when
+ * carry flag is not set.
+ */
+void CPU::callIfOddParity(int &cycles, Memory &mem) {
+  if (!statusFlags.p) {
+    unconditionalCall(cycles, mem);
+  } else {
+    // In case the parity flag is not set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Similar to callIfOddParity. Transfer program control to a certain
+ * memory location only when parity flag is set.
+ */
+void CPU::callIfEvenParity(int &cycles, Memory &mem) {
+  if (statusFlags.p) {
+    unconditionalCall(cycles, mem);
+  } else {
+    // In case the parity flag is not set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Transfer program control to a certain memory location only when
+ * sign flag is not set.
+ */
+void CPU::callIfPositive(int &cycles, Memory &mem) {
+  if (!statusFlags.s) {
+    unconditionalCall(cycles, mem);
+  } else {
+    // In case the sign flag is set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Similar to callIfPositive Transfer program control to a certain
+ * memory location only when sign flag is set.
+ */
+void CPU::callIfMinus(int &cycles, Memory &mem) {
+  if (statusFlags.s) {
+    unconditionalCall(cycles, mem);
+  } else {
+    // In case the sign flag is set, then just read the next byte
+    // (target location), consume the required cycles and continue to
+    // next instruction.
+    fetchWord(cycles, mem);
+  }
+}
+
+/**
+ * Push the target on top os stack ( pointed by the stack pointer
+ * ). As the stack grows downwards in this processor, decrement the
+ * stack pointer to the new top
+ */
+void CPU::stackPush(int &cycles, Memory &mem, const Byte &data) {
+  cycles++;
+  mem[stackPointer] = data;
+  stackPointer--;
+}
+
+/**
+ * Pop and return the data on top of the stack (pointed by the stack
+ * pointer). As the satck grows downwards in this processor, increment
+ * the stack pointer to the new top.
+ */
+Byte CPU::stackPop(int &cycles, const Memory &mem) {
+  cycles++;
+  auto data = mem[stackPointer];
+  stackPointer++;
+  return data;
 }

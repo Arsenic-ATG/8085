@@ -104,14 +104,40 @@ public:
       LHLD = 0x2A, SHLD = 0x22,
 
       // exchange HL and DE
-      XCHNG = 0xEB;
+      XCHNG = 0xEB,
+
+      /** Branch group*/
+
+      // Jump
+      JMP = 0xC3, JNZ = 0xC2, JZ = 0xCA, JNC = 0xD2, JC = 0xDA, JPO = 0xE2,
+      JPE = 0xEA, JP = 0xF2, JM = 0xFA,
+
+      // Call
+      CALL = 0xCD, CNZ = 0xC4, CZ = 0xCC, CNC = 0xD4, CC = 0xDC, CPO = 0xE6,
+      CPE = 0xEC, CP = 0xF4, CM = 0xFC,
+
+      // Return
+      RET = 0xC9, RNZ = 0xC0, RZ = 0xC8, RNC = 0xD0, RC = 0xD8, RPO = 0xE0,
+      RPE = 0xE8, RP = 0xF0, RM = 0xF8,
+
+      // jump indirect
+      PCHL = 0xE9;
 
   /** debug */
 
   /** getters */
   auto getProgramCounter() const { return programCounter; }
-  auto getBRegister () const {return B; }
-  auto getARegister () const {return A; }
+  auto getStackPointer() const { return stackPointer; }
+  auto getStatusFlags() const { return statusFlags; }
+
+  auto getARegister() const { return A; }
+  auto getBRegister() const { return B; }
+  auto getCRegister() const { return C; }
+  auto getDRegister() const { return D; }
+  auto getERegister() const { return E; }
+  auto getHRegister() const { return H; }
+  auto getLRegister() const { return L; }
+
 private:
   StatusFlags statusFlags; // program status word
   Word programCounter;     // program counter
@@ -129,9 +155,35 @@ private:
   void moveImmediate(Byte &destination, int &cycles, const Memory &mem);
   void loadImmediate(Byte &reg1, Byte &reg2, int &cycles, const Memory &mem);
   void loadImmediate(Word &reg, int &cycles, const Memory &mem);
+
   void unconditionalJump(int &cycles, const Memory &mem);
+
+  // conditional jump
   void jumpIfNotZero(int &cycles, const Memory &mem);
   void jumpIfZero(int &cycles, const Memory &mem);
+  void jumpIfNotCarry(int &cycles, const Memory &mem);
+  void jumpIfCarry(int &cycles, const Memory &mem);
+  void jumpIfOddParity(int &cycles, const Memory &mem);
+  void jumpIfEvenParity(int &cycles, const Memory &mem);
+  void jumpIfPositive(int &cycles, const Memory &mem);
+  void jumpIfMinus(int &cycles, const Memory &mem);
+
+  // call
+  void unconditionalCall(int &cycles, Memory &mem);
+
+  // conditional call
+  void callIfNotZero(int &cycles, Memory &mem);
+  void callIfZero(int &cycles, Memory &mem);
+  void callIfNotCarry(int &cycles, Memory &mem);
+  void callIfCarry(int &cycles, Memory &mem);
+  void callIfOddParity(int &cycles, Memory &mem);
+  void callIfEvenParity(int &cycles, Memory &mem);
+  void callIfPositive(int &cycles, Memory &mem);
+  void callIfMinus(int &cycles, Memory &mem);
+
+  // stack
+  void stackPush(int &cycles, Memory &mem, const Byte &data);
+  Byte stackPop(int &cycles, const Memory &mem);
 };
 
 } // namespace emu
